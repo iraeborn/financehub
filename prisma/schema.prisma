@@ -1,0 +1,220 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                    String                @id @default(cuid())
+  email                 String                @unique
+  name                  String?
+  avatar                String?
+  phone                 String?
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+  
+  // Relacionamentos
+  accounts              Account[]
+  categories            Category[]
+  transactions          Transaction[]
+  creditCards           CreditCard[]
+  invoices              Invoice[]
+  goals                 Goal[]
+  notifications         Notification[]
+  installments          Installment[]
+  
+  @@map("users")
+}
+
+model Account {
+  id          String   @id @default(cuid())
+  name        String
+  type        String   // 'checking', 'savings', 'investment', 'cash'
+  balance     Float    @default(0)
+  bank        String?
+  agency      String?
+  account     String?
+  description String?
+  isActive    Boolean  @default(true)
+  userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relacionamentos
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+  
+  @@map("accounts")
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  type        String   // 'income', 'expense'
+  color       String?
+  icon        String?
+  description String?
+  isDefault   Boolean  @default(false)
+  parentId    String?
+  userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relacionamentos
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent      Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  transactions Transaction[]
+  
+  @@map("categories")
+}
+
+model Transaction {
+  id           String      @id @default(cuid())
+  description  String
+  amount       Float
+  type         String      // 'income', 'expense'
+  date         DateTime
+  accountId    String
+  categoryId   String
+  creditCardId String?
+  installmentId String?
+  receipt      String?     // URL do recibo
+  notes        String?
+  isRecurring  Boolean     @default(false)
+  recurringInterval String? // 'daily', 'weekly', 'monthly', 'yearly'
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  
+  // Relacionamentos
+  account      Account     @relation(fields: [accountId], references: [id])
+  category     Category    @relation(fields: [categoryId], references: [id])
+  creditCard   CreditCard? @relation(fields: [creditCardId], references: [id])
+  installment  Installment? @relation(fields: [installmentId], references: [id])
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  
+  @@map("transactions")
+}
+
+model CreditCard {
+  id              String   @id @default(cuid())
+  name            String
+  brand           String   // 'visa', 'mastercard', 'elo', 'amex', etc.
+  lastFourDigits  String
+  limit           Float
+  currentBalance  Float    @default(0)
+  closingDay      Int      // Dia de fechamento da fatura
+  dueDay          Int      // Dia de vencimento da fatura
+  isActive        Boolean  @default(true)
+  description     String?
+  userId          String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Relacionamentos
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions    Transaction[]
+  invoices        Invoice[]
+  installments    Installment[]
+  
+  @@map("credit_cards")
+}
+
+model Invoice {
+  id              String   @id @default(cuid())
+  month           Int
+  year            Int
+  openingBalance  Float    @default(0)
+  totalPurchases  Float    @default(0)
+  totalPayments   Float    @default(0)
+  closingBalance  Float    @default(0)
+  minimumPayment  Float?
+  dueDate         DateTime
+  status          String   // 'open', 'closed', 'paid', 'overdue'
+  creditCardId    String
+  userId          String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Relacionamentos
+  creditCard      CreditCard @relation(fields: [creditCardId], references: [id])
+  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  installments    Installment[]
+  
+  @@unique([creditCardId, month, year])
+  @@map("invoices")
+}
+
+model Installment {
+  id              String   @id @default(cuid())
+  totalAmount     Float
+  installmentAmount Float
+  installmentNumber Int
+  totalInstallments Int
+  interestRate    Float?   // Taxa de juros (se houver)
+  interestType    String?  // 'simple', 'compound'
+  dueDate         DateTime
+  status          String   // 'pending', 'paid', 'overdue'
+  originalTransactionId String
+  creditCardId    String
+  invoiceId       String?
+  userId          String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Relacionamentos
+  creditCard      CreditCard   @relation(fields: [creditCardId], references: [id])
+  invoice         Invoice?     @relation(fields: [invoiceId], references: [id])
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions    Transaction[]
+  
+  @@map("installments")
+}
+
+model Goal {
+  id              String   @id @default(cuid())
+  title           String
+  description     String?
+  targetAmount    Float
+  currentAmount   Float    @default(0)
+  targetDate      DateTime
+  type            String   // 'savings', 'expense_limit', 'debt_reduction'
+  category        String?
+  isActive        Boolean  @default(true)
+  userId          String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Relacionamentos
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notifications   Notification[]
+  
+  @@map("goals")
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  title       String
+  message     String
+  type        String   // 'info', 'warning', 'error', 'success'
+  isRead      Boolean  @default(false)
+  userId      String
+  goalId      String?
+  createdAt   DateTime @default(now())
+  
+  // Relacionamentos
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goal        Goal?    @relation(fields: [goalId], references: [id])
+  
+  @@map("notifications")
+}
