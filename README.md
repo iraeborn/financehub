@@ -7,6 +7,7 @@ O FinanceControl é um sistema completo de gerenciamento financeiro pessoal e em
 ## 🚀 Funcionalidades
 
 ### 💰 Transações Financeiras
+
 - **CRUD completo** de receitas e despesas
 - **Categorização** automática e personalizada
 - **Upload de recibos** e anexos
@@ -14,18 +15,21 @@ O FinanceControl é um sistema completo de gerenciamento financeiro pessoal e em
 - **Filtros avançados** por período, categoria, conta
 
 ### 🏦 Contas Bancárias
+
 - **Múltiplos tipos**: Conta corrente, poupança, investimento, carteira
 - **Saldo em tempo real**
 - **Sincronização automática** com transações
 - **Histórico completo** de movimentações
 
 ### 💳 Cartões de Crédito
+
 - **Cadastro ilimitado** de cartões
 - **Controle de limites** e saldos
 - **Configuração** de datas de fechamento e vencimento
 - **Visão geral** de todos os cartões
 
 ### 📊 Parcelamentos
+
 - **Cálculo automático** de parcelas
 - **Suporte a juros simples** e compostos
 - **Projeção de parcelas** futuras
@@ -33,12 +37,14 @@ O FinanceControl é um sistema completo de gerenciamento financeiro pessoal e em
 - **Recálculo** em caso de antecipação
 
 ### 📄 Faturas
+
 - **Geração automática** mensal
 - **Acompanhamento** de status (aberta, fechada, paga, atrasada)
 - **Integração** com parcelamentos
 - **Relatórios detalhados** por fatura
 
 ### 📈 Dashboard Analítico
+
 - **KPIs em tempo real**: saldo total, receitas, despesas
 - **Gráficos interativos** de evolução mensal
 - **Análise por categoria**
@@ -46,6 +52,7 @@ O FinanceControl é um sistema completo de gerenciamento financeiro pessoal e em
 - **Alertas e notificações**
 
 ### 🎯 Metas Financeiras
+
 - **Metas de economia** personalizados
 - **Limites de gastos** por categoria
 - **Metas de quitação** de dívidas
@@ -53,6 +60,7 @@ O FinanceControl é um sistema completo de gerenciamento financeiro pessoal e em
 - **Alertas automáticos**
 
 ### 📋 Relatórios
+
 - **Exportação em PDF**, Excel e CSV
 - **Extratos por período**
 - **Análise de despesas** por categoria
@@ -60,6 +68,7 @@ O FinanceControl é um sistema completo de gerenciamento financeiro pessoal e em
 - **Projeções anuais**
 
 ### 🔔 Notificações
+
 - **Alertas de vencimento** de faturas
 - **Avisos de metas** atingidas
 - **Notificações de gastos** anormais
@@ -68,6 +77,7 @@ O FinanceControl é um sistema completo de gerenciamento financeiro pessoal e em
 ## 🏗️ Arquitetura
 
 ### Frontend
+
 - **Next.js 15** com App Router
 - **TypeScript 5** para tipagem segura
 - **Tailwind CSS** para estilização
@@ -78,6 +88,7 @@ O FinanceControl é um sistema completo de gerenciamento financeiro pessoal e em
 - **Zustand** para estado global
 
 ### Backend
+
 - **API Routes** do Next.js
 - **Prisma ORM** para banco de dados
 - **SQLite** para persistência
@@ -85,6 +96,7 @@ O FinanceControl é um sistema completo de gerenciamento financeiro pessoal e em
 - **TypeScript** para type safety
 
 ### Banco de Dados
+
 - **SQLite** para desenvolvimento
 - **Prisma Migrations** para versionamento
 - **Relacionamentos complexos** entre entidades
@@ -127,67 +139,81 @@ finance-control/
 ### Entidades Principais
 
 #### User
+
 - Informações do usuário
 - Relacionamento com todas as entidades
 
 #### Account
+
 - Contas bancárias (corrente, poupança, investimento, carteira)
 - Saldo e informações bancárias
 
 #### Category
+
 - Categorias de receitas e despesas
 - Suporte a hierarquia (subcategorias)
 
 #### Transaction
+
 - Transações financeiras
 - Relacionamento com contas, categorias, cartões
 
 #### CreditCard
+
 - Cartões de crédito
 - Limites, datas de fechamento/vencimento
 
 #### Installment
+
 - Parcelamentos de compras
 - Cálculo de juros, vencimentos
 
 #### Invoice
+
 - Faturas de cartões de crédito
 - Status e histórico
 
 #### Goal
+
 - Metas financeiras
 - Progresso e alertas
 
 #### Notification
+
 - Sistema de notificações
 - Alertas personalizados
 
 ## 🔧 Instalação e Configuração
 
 ### Pré-requisitos
+
 - Node.js 18+
 - npm ou yarn
 
 ### Passos para instalação
 
 1. **Clonar o repositório**
+
    ```bash
    git clone <repository-url>
-   cd finance-control
+   cd financehub
    ```
 
 2. **Instalar dependências**
+
    ```bash
    npm install
    ```
 
 3. **Configurar variáveis de ambiente**
+
    ```bash
    cp .env.example .env
    # Editar .env com suas configurações
    ```
 
 4. **Configurar banco de dados**
+
    ```bash
    npm run db:generate
    npm run db:push
@@ -202,64 +228,76 @@ finance-control/
 ## 📊 APIs Disponíveis
 
 ### Transações
+
 - `GET /api/transactions` - Listar transações
 - `POST /api/transactions` - Criar transação
 - `PUT /api/transactions/:id` - Atualizar transação
 - `DELETE /api/transactions/:id` - Excluir transação
 
 ### Contas
+
 - `GET /api/accounts` - Listar contas
 - `POST /api/accounts` - Criar conta
 - `PUT /api/accounts/:id` - Atualizar conta
 - `DELETE /api/accounts/:id` - Excluir conta
 
 ### Cartões de Crédito
+
 - `GET /api/credit-cards` - Listar cartões
 - `POST /api/credit-cards` - Criar cartão
 - `PUT /api/credit-cards/:id` - Atualizar cartão
 - `DELETE /api/credit-cards/:id` - Excluir cartão
 
 ### Cálculos Financeiros
+
 - `POST /api/financial-calculations` - Calcular parcelamentos
 - `GET /api/financial-calculations` - Análise financeira avançada
 
 ### Dashboard
+
 - `GET /api/dashboard` - Dados do dashboard
 
 ## 🧮 Cálculos Financeiros
 
 ### Cálculo de Parcelas
+
 ```typescript
 // Juros Simples
-parcela = (principal + (principal * taxa * prazo/12)) / parcelas
+parcela = (principal + (principal * taxa * prazo) / 12) / parcelas;
 
 // Juros Compostos
-parcela = principal * (taxaMensal * (1 + taxaMensal)^parcelas) / ((1 + taxaMensal)^parcelas - 1)
+parcela = (principal * ((taxaMensal * (1 + taxaMensal)) ^ parcelas)) / ((1 + taxaMensal) ^ (parcelas - 1));
 ```
 
 ### Análise de Risco
+
 - **Utilização de crédito**: Saldo / Limite
-- **Nível de risco**: 
+- **Nível de risco**:
   - Baixo: < 50%
   - Médio: 50-70%
   - Alto: > 70%
 
 ### Detecção de Anomalias
+
 - **Média e desvio padrão** dos gastos
 - **Alerta** para gastos > 2 desvios padrão
 
 ## 📈 Relatórios
 
 ### Tipos de Relatórios
+
 1. **Extrato por Período**
+
    - Todas as transações filtradas por data
    - Totais por categoria
 
 2. **Análise de Despesas**
+
    - Gráficos por categoria
    - Comparativos mensais
 
 3. **Relatório de Faturas**
+
    - Histórico de faturas
    - Status e pagamentos
 
@@ -268,6 +306,7 @@ parcela = principal * (taxaMensal * (1 + taxaMensal)^parcelas) / ((1 + taxaMensa
    - Metas projetadas
 
 ### Exportação
+
 - **PDF**: Formato otimizado para impressão
 - **Excel**: Planilha com dados detalhados
 - **CSV**: Formato aberto para integração
@@ -275,11 +314,13 @@ parcela = principal * (taxaMensal * (1 + taxaMensal)^parcelas) / ((1 + taxaMensa
 ## 🔐 Segurança
 
 ### Validação de Dados
+
 - **Zod schemas** para validação rigorosa
 - **TypeScript** para type safety
 - **Sanitização** de inputs
 
 ### Autenticação
+
 - **NextAuth.js** para autenticação
 - **JWT tokens** para sessões
 - **Proteção** de rotas sensíveis
@@ -287,12 +328,14 @@ parcela = principal * (taxaMensal * (1 + taxaMensal)^parcelas) / ((1 + taxaMensa
 ## 🚀 Deploy
 
 ### Produção
+
 ```bash
 npm run build
 npm start
 ```
 
 ### Docker
+
 ```dockerfile
 FROM node:18-alpine
 WORKDIR /app

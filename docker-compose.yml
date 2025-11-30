@@ -1,46 +1,7 @@
-version: '3.8'
-
 services:
-  # Next.js Application
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
-      - DATABASE_URL=file:./db/custom.db
-    volumes:
-      - ./db:/app/db
-    depends_on:
-      - db-seed
-    restart: unless-stopped
-    networks:
-      - finance-network
-
-  # Database seeding service
-  db-seed:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      - NODE_ENV=production
-      - DATABASE_URL=file:./db/custom.db
-    volumes:
-      - ./db:/app/db
-    command: >
-      sh -c "
-        npx prisma generate &&
-        npx prisma db push &&
-        npx tsx prisma/seed.ts
-      "
-    networks:
-      - finance-network
-
-  # Optional: PostgreSQL for production
   postgres:
     image: postgres:15-alpine
+    container_name: finance_postgres
     environment:
       POSTGRES_DB: finance_control
       POSTGRES_USER: finance_user
@@ -48,43 +9,53 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - '5432:5432'
     networks:
       - finance-network
-    profiles:
-      - production
 
-  # Optional: Redis for caching
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    networks:
-      - finance-network
-    profiles:
-      - production
-
-  # Optional: Nginx as reverse proxy
-  nginx:
-    image: nginx:alpine
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./ssl:/etc/nginx/ssl
+  db-seed:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: deps
+    env_file:
+      - .env
     depends_on:
-      - app
+      - postgres
     networks:
       - finance-network
-    profiles:
-      - production
+    command: >
+      sh -c "
+        echo '⏳ Aguardando Postgres...' &&
+        npx prisma generate &&
+        npx prisma migrate deploy
+      "
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    depends_on:
+      - db-seed
+    networks:
+      - finance-network
+    restart: unless-stopped
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json
 
 volumes:
   postgres_data:
-  redis_data:
 
 networks:
   finance-network:
